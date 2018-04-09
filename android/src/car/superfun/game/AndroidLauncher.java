@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -45,6 +46,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import car.superfun.game.gameModes.raceMode.OpponentCar;
 
 
 public class AndroidLauncher extends AndroidApplication {
@@ -82,12 +85,19 @@ public class AndroidLauncher extends AndroidApplication {
     // Message buffer for sending messages
     byte[] mMsgBuf = new byte[14];
 
+
+    Map<String, OpponentCar> mParticipantPosition = null;
+
+    // Participants who sent us their final score.
+    Set<String> mFinishedParticipants = new HashSet<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         this.carSuperFun =  new CarSuperFun(this);
         initialize(carSuperFun, config);
+        mParticipantPosition = new HashMap<>();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
     }
@@ -122,10 +132,12 @@ public class AndroidLauncher extends AndroidApplication {
         }  else if (requestCode == RC_WAITING_ROOM) {
             // we got the result from the "waiting room" UI.
             if (resultCode == Activity.RESULT_OK) {
-                // ready to start playing
                 Log.d(TAG, "Starting game (waiting room returned OK).");
+               // GameStateManager.getInstance().push(new RaceMode(this, false));
 
-                // GameStateManager.getInstance().push(new RaceMode(this, false));
+                for(Participant participant : mParticipants) {
+                    mParticipantPosition.put(participant.getParticipantId(), new OpponentCar(new Vector2(), new World(new Vector2(), false)));
+                }
 
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
@@ -498,20 +510,6 @@ public class AndroidLauncher extends AndroidApplication {
                 .show();
     }
 
-       /*
-     * COMMUNICATIONS SECTION. Methods that implement the game's network
-     * protocol.
-     */
-
-    // Score of other participants. We update this as we receive their scores
-    // from the network.
-    Map<String, Integer> mParticipantScore = new HashMap<>();
-
-    Map<String, Vector2> mParticipantPosition = new HashMap<>();
-
-    // Participants who sent us their final score.
-    Set<String> mFinishedParticipants = new HashSet<>();
-
     // Called when we receive a real-time message from the network.
     // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
     // indicating
@@ -525,12 +523,6 @@ public class AndroidLauncher extends AndroidApplication {
             String sender = realTimeMessage.getSenderParticipantId();
 
             if (buf[0] == 'F' || buf[0] == 'U') {
-                // score update.
-                int existingScore = mParticipantScore.containsKey(sender) ?
-                        mParticipantScore.get(sender) : 0;
-                int thisScore = (int) buf[1];
-
-
                 byte[] bytes = new byte[4];
 
                 for (byte byteValue = 0; byteValue<bytes.length; byteValue++) {
@@ -551,6 +543,7 @@ public class AndroidLauncher extends AndroidApplication {
 
                 angle = ByteBuffer.wrap(bytes).getFloat();
 
+                // mParticipantPosition.get(realTimeMessage.getSenderParticipantId());
 
                 // if it's a final score, mark this participant as having finished
                 // the game
