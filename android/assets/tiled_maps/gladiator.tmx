@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="28">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="130" tileheight="130" infinite="0" nextobjectid="32">
  <tileset firstgid="1" source="simpleTiles.tsx"/>
  <layer name="ground" width="100" height="100">
   <data encoding="csv">
@@ -214,6 +214,20 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="starting_points">
+  <object id="28" x="3888" y="3792">
+   <point/>
+  </object>
+  <object id="29" x="9648" y="3504">
+   <point/>
+  </object>
+  <object id="30" x="9616" y="9888">
+   <point/>
+  </object>
+  <object id="31" x="3936" y="9728">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup name="walls">
   <object id="1" x="9424.88" y="3770">
    <polyline points="0,0 16.5,2.125 32.125,8.5 45.125,19 55.75,33 61.875,46.25 65.125,64.75 61.875,84.375 55.75,98 44.5,112.25 32.125,121.5 19.875,126.75 0.25,130"/>

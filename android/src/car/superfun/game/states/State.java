@@ -1,14 +1,12 @@
 package car.superfun.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class State {
 
     protected State() {
     }
-
-    //Handles input from user
-    public abstract void handleInput();
 
     //Updates the state
     public abstract void update(float dt);
@@ -18,4 +16,9 @@ public abstract class State {
 
     //dispose
     public abstract void dispose();
+
+    //Set input processor
+    public void setInputProcessor(){
+        Gdx.input.setInputProcessor(null);
+    };
 }

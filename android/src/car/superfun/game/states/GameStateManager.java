@@ -1,5 +1,6 @@
 package car.superfun.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
@@ -15,16 +16,17 @@ public class GameStateManager {
     private static GameStateManager gameStateManager = null;
 
     //Stack containing the states in use
-    private Stack<State> states = new Stack<State>();;
+    private Stack<State> states = new Stack<State>();
 
-    //Changed the contructor to private so that the only way to init the class is from the class
+
+    //Changed the constructor to private so that the only way to init the class is from the class
     //itself
-    private GameStateManager(){
+    private GameStateManager() {
     }
 
-    //Returnes the one and only instance of the class
+    //Returns the one and only instance of the class
     public static GameStateManager getInstance() {
-        if(gameStateManager == null) {
+        if (gameStateManager == null) {
             gameStateManager = new GameStateManager();
         }
         return gameStateManager;
@@ -32,46 +34,53 @@ public class GameStateManager {
 
     /**
      * Add a state to the stack
+     *
      * @param state
      */
-    public void push(State state)
-    {
+    public void push(State state) {
         states.push(state);
+        states.peek().setInputProcessor();
     }
 
     /**
      * Remove top state from stack
      */
-    public void pop(){
+    public void pop() {
+        dispose();
         states.pop();
+        states.peek().setInputProcessor();
     }
 
     /**
      * Sets new state
      * Removes last state and sets the given state
+     *
      * @param state
      */
     public void set(State state) {
+        dispose();
         states.pop();
         states.push(state);
+        states.peek().setInputProcessor();
     }
 
     /**
-     * updates the states
+     * updates the top state
      * @param dt
      */
     public void update(float dt) {
-        if(!states.empty()) {
+        if (!states.empty()) {
             states.peek().update(dt);
         }
     }
 
     /**
      * Calls the render function for the state at the top of the stack
+     *
      * @param sb
      */
     public void render(SpriteBatch sb) {
-        if(!states.empty()) {
+        if (!states.empty()) {
             states.peek().render(sb);
         }
     }
@@ -80,15 +89,20 @@ public class GameStateManager {
      * Disposes for a given state
      */
     public void dispose() {
-        if(!states.empty()) {
+        if (!states.empty()) {
             states.peek().dispose();
         }
     }
 
-    public boolean isEmpty() {
-        return states.isEmpty();
+    /**
+     * Retunes the state at the top of the stack
+     * @return
+     */
+    public State peek() {
+        if (!states.empty()) {
+            return states.peek();
+        }
+        return null;
     }
-    public boolean isOnlyOneLeft() {
-        return (states.size() == 1);
-    }
+
 }
